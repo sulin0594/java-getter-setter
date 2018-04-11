@@ -50,26 +50,15 @@ function createGetterAndSetter(p: String) {
         p = p.substr(0, p.length - 1);
     }
 
-    let words = p.split(" ").map(x => x.replace('\r\n', ''));
-    let type, attribute, Attribute = "";
-    let create = false;
+    let words = p.split(" ").map(x => x.replace('\r\n', '')).filter((x) => {
+        return !(x === 'static' || x === 'final' || x === 'volatile' || x === 'transient' || x === 'public' || x === 'private' || x === 'protected');
+    });
 
-    // if words == ["private", "String", "name"];
-    if (words.length > 2) {
-        type = words[1];
-        attribute = words[2];
-        Attribute = toPascalCase(words[2]);
-        create = true;
-    }
-    // if words == ["String", "name"];
-    else if (words.length == 2) {
-        type = words[0];
-        attribute = words[1];
-        Attribute = toPascalCase(words[1]);
-        create = true;
-    }
+    let type = words[0];
+    let attribute = words[1];
+    let Attribute = toPascalCase(words[1]);
 
-    if (create) {
+    if (type && Attribute) {
         return `
 \tpublic ${type} get${Attribute}() {
 \t\treturn this.${attribute};
